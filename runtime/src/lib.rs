@@ -40,8 +40,11 @@ use pallet_transaction_payment::CurrencyAdapter;
 pub use sp_runtime::BuildStorage;
 pub use sp_runtime::{Perbill, Permill};
 
-/// Import the template pallet.
+/// Import the local pallet.
 pub use pallet_template;
+pub use pallet_tightly_coupling;
+pub use pallet_loosely_coupling;
+pub use pallet_kitties;
 
 /// An index to a block.
 pub type BlockNumber = u32;
@@ -225,6 +228,7 @@ impl pallet_grandpa::Config for Runtime {
 
 parameter_types! {
 	pub const MinimumPeriod: u64 = SLOT_DURATION / 2;
+	pub const MaxKittiesOwned : u32 = 20;
 }
 
 impl pallet_timestamp::Config for Runtime {
@@ -270,6 +274,21 @@ impl pallet_sudo::Config for Runtime {
 impl pallet_template::Config for Runtime {
 	type Event = Event;
 }
+/// Configure the pallet-tightly-coupling
+impl pallet_tightly_coupling::Config for Runtime {
+	type Event = Event;
+}
+impl pallet_loosely_coupling::Config for Runtime {
+	type Event = Event;
+	type DoSome = TemplateModule;
+}
+
+impl pallet_kitties::Config for Runtime{
+	type Event = Event;
+	type Currency = Balances;
+	type MaxKittyOwned = MaxKittiesOwned;
+	type KittyRandomness = RandomnessCollectiveFlip;
+}
 
 // Create the runtime by composing the FRAME pallets that were previously configured.
 construct_runtime!(
@@ -288,6 +307,9 @@ construct_runtime!(
 		Sudo: pallet_sudo,
 		// Include the custom logic from the pallet-template in the runtime.
 		TemplateModule: pallet_template,
+		TightlyCoupling: pallet_tightly_coupling,
+		LooselyCoupling: pallet_loosely_coupling,
+		Kitties: pallet_kitties,
 	}
 );
 

@@ -2,16 +2,25 @@
 
 pub use pallet::*;
 
-// use sp_runtime::traits::Saturating;
+// #[cfg(test)]
+// mod mock;
+
+// #[cfg(test)]
+// mod tests;
+
+// #[cfg(feature = "runtime-benchmarks")]
+// mod benchmarking;
 
 #[frame_support::pallet]
 pub mod pallet {
 	use frame_support::pallet_prelude::*;
 	use frame_system::pallet_prelude::*;
+	use pallet_template::DoSomeActivity;
 
 	#[pallet::config]
-	pub trait Config: frame_system::Config {
+	pub trait Config: frame_system::Config{
 		type Event: From<Event<Self>> + IsType<<Self as frame_system::Config>::Event>;
+		type DoSome: DoSomeActivity;
 	}
 
 	#[pallet::pallet]
@@ -26,8 +35,7 @@ pub mod pallet {
 	#[pallet::event]
 	#[pallet::generate_deposit(pub(super) fn deposit_event)]
 	pub enum Event<T: Config> {
-		SomethingStored(u32, T::AccountId),
-		AccessStore(u32),
+		IncreaseSuccess(u32),
 	}
 
 	#[pallet::error]
@@ -40,25 +48,14 @@ pub mod pallet {
 	#[pallet::call]
 	impl<T: Config> Pallet<T> {
 		#[pallet::weight(10_000 + T::DbWeight::get().writes(1))]
-		pub fn do_something(origin: OriginFor<T>, something: u32) -> DispatchResult {
-			let who = ensure_signed(origin)?;
+		pub fn increase_value(origin: OriginFor<T>, value: u32) -> DispatchResult {
+			let _who = ensure_signed(origin)?;
 
-			<Something<T>>::put(something);
+			let result = T::DoSome::increase_value(value);
 
-			Self::deposit_event(Event::SomethingStored(something, who));
+			Self::deposit_event(Event::IncreaseSuccess(result));
 
 			Ok(())
 		}
-	}
-}
-
-
-pub trait DoSomeActivity{
-	fn increase_value(value: u32) -> u32;
-}
-
-impl <T:Config> DoSomeActivity for Pallet<T> {
-	fn increase_value(value: u32) -> u32{
-		value.saturating_add(5)
 	}
 }
