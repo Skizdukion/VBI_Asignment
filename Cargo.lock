@@ -3601,12 +3601,11 @@ dependencies = [
  "pallet-aura",
  "pallet-balances",
  "pallet-grandpa",
- "pallet-kitties",
- "pallet-loosely-coupling",
+ "pallet-loosely-kitties",
+ "pallet-my-timestamp",
  "pallet-randomness-collective-flip",
  "pallet-sudo",
- "pallet-template",
- "pallet-tightly-coupling",
+ "pallet-tightly-kitties",
  "pallet-timestamp",
  "pallet-transaction-payment",
  "pallet-transaction-payment-rpc-runtime-api",
@@ -3877,12 +3876,13 @@ dependencies = [
 ]
 
 [[package]]
-name = "pallet-kitties"
+name = "pallet-loosely-kitties"
 version = "4.0.0-dev"
 dependencies = [
  "frame-benchmarking",
  "frame-support",
  "frame-system",
+ "pallet-my-timestamp",
  "parity-scale-codec",
  "scale-info",
  "serde",
@@ -3892,18 +3892,22 @@ dependencies = [
 ]
 
 [[package]]
-name = "pallet-loosely-coupling"
+name = "pallet-my-timestamp"
 version = "4.0.0-dev"
 dependencies = [
  "frame-benchmarking",
  "frame-support",
  "frame-system",
- "pallet-template",
+ "log",
  "parity-scale-codec",
  "scale-info",
+ "sp-arithmetic",
  "sp-core",
+ "sp-inherents",
  "sp-io",
  "sp-runtime",
+ "sp-std",
+ "sp-timestamp",
 ]
 
 [[package]]
@@ -3956,29 +3960,16 @@ dependencies = [
 ]
 
 [[package]]
-name = "pallet-template"
+name = "pallet-tightly-kitties"
 version = "4.0.0-dev"
 dependencies = [
  "frame-benchmarking",
  "frame-support",
  "frame-system",
+ "pallet-my-timestamp",
  "parity-scale-codec",
  "scale-info",
- "sp-core",
- "sp-io",
- "sp-runtime",
-]
-
-[[package]]
-name = "pallet-tightly-coupling"
-version = "4.0.0-dev"
-dependencies = [
- "frame-benchmarking",
- "frame-support",
- "frame-system",
- "pallet-template",
- "parity-scale-codec",
- "scale-info",
+ "serde",
  "sp-core",
  "sp-io",
  "sp-runtime",

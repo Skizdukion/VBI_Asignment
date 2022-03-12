@@ -1,5 +1,5 @@
 [package]
-name = "pallet-kitties"
+name = "pallet-loosely-kitties"
 version = "4.0.0-dev"
 description = "FRAME pallet template for defining custom runtime logic."
 authors = ["Substrate DevHub <https://github.com/substrate-developer-hub>"]
@@ -23,6 +23,8 @@ frame-benchmarking = { default-features = false, version = "4.0.0-dev", git = "h
 sp-runtime = { default-features = false, version = "5.0.0", git = "https://github.com/paritytech/substrate.git", branch = "polkadot-v0.9.17" }
 sp-io = { default-features = false, version = "5.0.0", git = "https://github.com/paritytech/substrate.git", branch = "polkadot-v0.9.17" }
 serde = {default-features = false, version = "1.0.136", features = ["derive"]}
+# pallet-timestamp = { version = "4.0.0-dev", default-features = false, git = "https://github.com/paritytech/substrate.git", branch = "polkadot-v0.9.17" }
+pallet-my-timestamp = { default-features = false, version = "4.0.0-dev", path="../my-timestamp"}
 
 [dev-dependencies]
 sp-core = { default-features = false, version = "5.0.0", git = "https://github.com/paritytech/substrate.git", branch = "polkadot-v0.9.17" }
@@ -37,6 +39,7 @@ std = [
 	"frame-benchmarking/std",
 	"sp-runtime/std",
 	"sp-io/std",
+	"pallet-my-timestamp/std"
 ]
 
 runtime-benchmarks = ["frame-benchmarking/runtime-benchmarks"]

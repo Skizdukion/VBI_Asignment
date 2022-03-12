@@ -41,10 +41,9 @@ pub use sp_runtime::BuildStorage;
 pub use sp_runtime::{Perbill, Permill};
 
 /// Import the local pallet.
-pub use pallet_template;
-pub use pallet_tightly_coupling;
-pub use pallet_loosely_coupling;
-pub use pallet_kitties;
+pub use pallet_tightly_kitties;
+pub use pallet_loosely_kitties;
+pub use pallet_my_timestamp;
 
 /// An index to a block.
 pub type BlockNumber = u32;
@@ -239,6 +238,14 @@ impl pallet_timestamp::Config for Runtime {
 	type WeightInfo = ();
 }
 
+impl pallet_my_timestamp::Config for Runtime {
+	/// A timestamp: milliseconds since the unix epoch.
+	type Moment = u64;
+	type OnTimestampSet = Aura;
+	type MinimumPeriod = MinimumPeriod;
+	type WeightInfo = ();
+}
+
 impl pallet_balances::Config for Runtime {
 	type MaxLocks = ConstU32<50>;
 	type MaxReserves = ();
@@ -271,23 +278,20 @@ impl pallet_sudo::Config for Runtime {
 }
 
 /// Configure the pallet-template in pallets/template.
-impl pallet_template::Config for Runtime {
-	type Event = Event;
-}
-/// Configure the pallet-tightly-coupling
-impl pallet_tightly_coupling::Config for Runtime {
-	type Event = Event;
-}
-impl pallet_loosely_coupling::Config for Runtime {
-	type Event = Event;
-	type DoSome = TemplateModule;
-}
 
-impl pallet_kitties::Config for Runtime{
+impl pallet_tightly_kitties::Config for Runtime{
 	type Event = Event;
 	type Currency = Balances;
 	type MaxKittyOwned = MaxKittiesOwned;
 	type KittyRandomness = RandomnessCollectiveFlip;
+}
+
+impl pallet_loosely_kitties::Config for Runtime{
+	type Event = Event;
+	type Currency = Balances;
+	type MaxKittyOwned = MaxKittiesOwned;
+	type KittyRandomness = RandomnessCollectiveFlip;
+	type KittyTime = MyTimeStamp;
 }
 
 // Create the runtime by composing the FRAME pallets that were previously configured.
@@ -305,11 +309,9 @@ construct_runtime!(
 		Balances: pallet_balances,
 		TransactionPayment: pallet_transaction_payment,
 		Sudo: pallet_sudo,
-		// Include the custom logic from the pallet-template in the runtime.
-		TemplateModule: pallet_template,
-		TightlyCoupling: pallet_tightly_coupling,
-		LooselyCoupling: pallet_loosely_coupling,
-		Kitties: pallet_kitties,
+		TightlyKitties: pallet_tightly_kitties,
+		LooselyKitties: pallet_loosely_kitties,
+		MyTimeStamp: pallet_my_timestamp,
 	}
 );
 
