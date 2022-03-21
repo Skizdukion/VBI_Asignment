@@ -1,5 +1,5 @@
 use crate::{mock::*, Error};
-use frame_support::{assert_noop, assert_ok, log};
+use frame_support::{assert_noop, assert_ok};
 
 #[test]
 fn create_kitty_exceed_max_value() {
