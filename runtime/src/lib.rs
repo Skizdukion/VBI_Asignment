@@ -41,9 +41,9 @@ pub use sp_runtime::BuildStorage;
 pub use sp_runtime::{Perbill, Permill};
 
 /// Import the local pallet.
-pub use pallet_template;
-pub use pallet_tightly_coupling;
-pub use pallet_loosely_coupling;
+// pub use pallet_template;
+// pub use pallet_tightly_coupling;
+// pub use pallet_loosely_coupling;
 pub use pallet_kitties;
 
 /// An index to a block.
@@ -270,24 +270,25 @@ impl pallet_sudo::Config for Runtime {
 	type Call = Call;
 }
 
-/// Configure the pallet-template in pallets/template.
-impl pallet_template::Config for Runtime {
-	type Event = Event;
-}
+// /// Configure the pallet-template in pallets/template.
+// impl pallet_template::Config for Runtime {
+// 	type Event = Event;
+// }
 /// Configure the pallet-tightly-coupling
-impl pallet_tightly_coupling::Config for Runtime {
-	type Event = Event;
-}
-impl pallet_loosely_coupling::Config for Runtime {
-	type Event = Event;
-	type DoSome = TemplateModule;
-}
+// impl pallet_tightly_coupling::Config for Runtime {
+// 	type Event = Event;
+// }
+// impl pallet_loosely_coupling::Config for Runtime {
+// 	type Event = Event;
+// 	type DoSome = TemplateModule;
+// }
 
 impl pallet_kitties::Config for Runtime{
 	type Event = Event;
 	type Currency = Balances;
 	type MaxKittyOwned = MaxKittiesOwned;
 	type KittyRandomness = RandomnessCollectiveFlip;
+	type WeightInfo = pallet_kitties::weights::WeightInfo<Runtime>;
 }
 
 // Create the runtime by composing the FRAME pallets that were previously configured.
@@ -306,9 +307,9 @@ construct_runtime!(
 		TransactionPayment: pallet_transaction_payment,
 		Sudo: pallet_sudo,
 		// Include the custom logic from the pallet-template in the runtime.
-		TemplateModule: pallet_template,
-		TightlyCoupling: pallet_tightly_coupling,
-		LooselyCoupling: pallet_loosely_coupling,
+		// TemplateModule: pallet_template,
+		// TightlyCoupling: pallet_tightly_coupling,
+		// LooselyCoupling: pallet_loosely_coupling,
 		Kitties: pallet_kitties,
 	}
 );
@@ -352,7 +353,8 @@ mod benches {
 		[frame_system, SystemBench::<Runtime>]
 		[pallet_balances, Balances]
 		[pallet_timestamp, Timestamp]
-		[pallet_template, TemplateModule]
+		// [pallet_template, TemplateModule]
+		[pallet_kitties, Kitties]
 	);
 }
 

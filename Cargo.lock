@@ -3602,11 +3602,8 @@ dependencies = [
  "pallet-balances",
  "pallet-grandpa",
  "pallet-kitties",
- "pallet-loosely-coupling",
  "pallet-randomness-collective-flip",
  "pallet-sudo",
- "pallet-template",
- "pallet-tightly-coupling",
  "pallet-timestamp",
  "pallet-transaction-payment",
  "pallet-transaction-payment-rpc-runtime-api",
@@ -3883,12 +3880,16 @@ dependencies = [
  "frame-benchmarking",
  "frame-support",
  "frame-system",
+ "pallet-balances",
+ "pallet-randomness-collective-flip",
+ "pallet-timestamp",
  "parity-scale-codec",
  "scale-info",
  "serde",
  "sp-core",
  "sp-io",
  "sp-runtime",
+ "sp-std",
 ]
 
 [[package]]
