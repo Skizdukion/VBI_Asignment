@@ -27,8 +27,6 @@ pallet-randomness-collective-flip = { version = "4.0.0-dev", default-features = 
 pallet-balances = { version = "4.0.0-dev", default-features = false, git = "https://github.com/paritytech/substrate.git", branch = "polkadot-v0.9.17" }
 pallet-timestamp = { version = "4.0.0-dev", default-features = false, git = "https://github.com/paritytech/substrate.git", branch = "polkadot-v0.9.17" }
 sp-std = { version = "4.0.0-dev", default-features = false, git = "https://github.com/paritytech/substrate.git", branch = "polkadot-v0.9.17" }
-
-[dev-dependencies]
 sp-core = { default-features = false, version = "5.0.0", git = "https://github.com/paritytech/substrate.git", branch = "polkadot-v0.9.17" }
 
 [features]
@@ -44,7 +42,8 @@ std = [
 	"pallet-randomness-collective-flip/std",
 	"pallet-balances/std",
 	"pallet-timestamp/std",
-	"sp-std/std"
+	"sp-std/std",
+	"sp-core/std"
 ]
 
 runtime-benchmarks = ["frame-benchmarking/runtime-benchmarks"]

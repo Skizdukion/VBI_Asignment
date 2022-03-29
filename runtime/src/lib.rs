@@ -41,7 +41,7 @@ pub use sp_runtime::BuildStorage;
 pub use sp_runtime::{Perbill, Permill};
 
 /// Import the local pallet.
-// pub use pallet_template;
+pub use pallet_template;
 // pub use pallet_tightly_coupling;
 // pub use pallet_loosely_coupling;
 pub use pallet_kitties;
@@ -271,10 +271,10 @@ impl pallet_sudo::Config for Runtime {
 }
 
 // /// Configure the pallet-template in pallets/template.
-// impl pallet_template::Config for Runtime {
-// 	type Event = Event;
-// }
-/// Configure the pallet-tightly-coupling
+impl pallet_template::Config for Runtime {
+	type Event = Event;
+}
+
 // impl pallet_tightly_coupling::Config for Runtime {
 // 	type Event = Event;
 // }
@@ -307,10 +307,10 @@ construct_runtime!(
 		TransactionPayment: pallet_transaction_payment,
 		Sudo: pallet_sudo,
 		// Include the custom logic from the pallet-template in the runtime.
-		// TemplateModule: pallet_template,
+		TemplateModule: pallet_template,
 		// TightlyCoupling: pallet_tightly_coupling,
 		// LooselyCoupling: pallet_loosely_coupling,
-		Kitties: pallet_kitties,
+		SubstrateKitties: pallet_kitties,
 	}
 );
 
@@ -353,7 +353,7 @@ mod benches {
 		[frame_system, SystemBench::<Runtime>]
 		[pallet_balances, Balances]
 		[pallet_timestamp, Timestamp]
-		// [pallet_template, TemplateModule]
+		[pallet_template, TemplateModule]
 		[pallet_kitties, Kitties]
 	);
 }
@@ -423,6 +423,18 @@ impl_runtime_apis! {
 
 		fn authorities() -> Vec<AuraId> {
 			Aura::authorities().into_inner()
+		}
+	}
+
+	impl pallet_template_rpc_runtime_api::SumStorageApi<Block> for Runtime {
+		fn get_sum() -> u32{
+			TemplateModule::sum_storage()
+		}
+	}
+
+	impl pallet_kitties_rpc_runtime_api::KittiesStorageApi<Block> for Runtime {
+		fn get_total_kitties() -> u64{
+			SubstrateKitties::get_current_total_kitties()
 		}
 	}
 

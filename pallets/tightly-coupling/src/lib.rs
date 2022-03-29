@@ -50,7 +50,7 @@ pub mod pallet {
 		pub fn access_storage_template_pallet(origin: OriginFor<T>) -> DispatchResult {
 			let _who = ensure_signed(origin)?;
 
-			let data = pallet_template::Pallet::<T>::something().unwrap();
+			let data = pallet_template::Pallet::<T>::something1().unwrap();
 
 			// Self::deposit_event(Event::SomethingStored(something));
 

@@ -1,5 +1,6 @@
 #![cfg_attr(not(feature = "std"), no_std)]
 
+use frame_support::dispatch::DispatchResult;
 pub use pallet::*;
 
 // use sp_runtime::traits::Saturating;
@@ -19,9 +20,12 @@ pub mod pallet {
 	pub struct Pallet<T>(_);
 
 	#[pallet::storage]
-	#[pallet::getter(fn something)]
+	#[pallet::getter(fn something1)]
+	pub type Something1<T> = StorageValue<_, u32>;
 
-	pub type Something<T> = StorageValue<_, u32>;
+	#[pallet::storage]
+	#[pallet::getter(fn something2)]
+	pub type Something2<T> = StorageValue<_, u32>;
 
 	#[pallet::event]
 	#[pallet::generate_deposit(pub(super) fn deposit_event)]
@@ -40,10 +44,21 @@ pub mod pallet {
 	#[pallet::call]
 	impl<T: Config> Pallet<T> {
 		#[pallet::weight(10_000 + T::DbWeight::get().writes(1))]
-		pub fn do_something(origin: OriginFor<T>, something: u32) -> DispatchResult {
+		pub fn set_something_1(origin: OriginFor<T>, something: u32) -> DispatchResult {
 			let who = ensure_signed(origin)?;
 
-			<Something<T>>::put(something);
+			<Something1<T>>::put(something);
+
+			Self::deposit_event(Event::SomethingStored(something, who));
+
+			Ok(())
+		}
+
+		#[pallet::weight(10_000 + T::DbWeight::get().writes(1))]
+		pub fn set_something_2(origin: OriginFor<T>, something: u32) -> DispatchResult {
+			let who = ensure_signed(origin)?;
+
+			<Something2<T>>::put(something);
 
 			Self::deposit_event(Event::SomethingStored(something, who));
 
@@ -52,6 +67,21 @@ pub mod pallet {
 	}
 }
 
+impl<T: Config> Pallet<T>{
+	pub fn update_storage1(value: u32) -> DispatchResult{
+		<Something1<T>>::put(value);
+		Ok(())
+	}
+
+	pub fn update_storage2(value: u32) -> DispatchResult{
+		<Something2<T>>::put(value);
+		Ok(())
+	}
+
+	pub fn sum_storage() -> u32{
+		<Something1<T>>::get().unwrap() + <Something2<T>>::get().unwrap()
+	}
+}
 
 pub trait DoSomeActivity{
 	fn increase_value(value: u32) -> u32;

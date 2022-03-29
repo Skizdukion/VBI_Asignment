@@ -11,25 +11,91 @@ mod tests;
 pub mod weights;
 use weights::KittiesWeightInfo;
 
+use frame_support::pallet_prelude::*;
+use frame_support::{
+	log,
+	sp_runtime::traits::Hash,
+	traits::{tokens::ExistenceRequirement, Currency, Randomness},
+	transactional,
+};
+use frame_system::pallet_prelude::*;
+use scale_info::TypeInfo;
+use sp_io::hashing::blake2_128;
+use sp_core::hash::H256;
+use std::str::FromStr;
+// use sp_core::crypto::Ss58Codec;
+
+#[cfg(feature = "std")]
+use frame_support::serde::{Deserialize, Serialize};
+
 #[cfg(feature = "runtime-benchmarks")]
 mod benchmarking;
+
+// #[cfg(feature = "std")]
+// mod serde_fields {
+// 	use serde::{Deserialize, Deserializer, Serializer};
+
+// 	pub fn serialize<S: Serializer, T: std::fmt::Display>(
+// 		t: &T,
+// 		serializer: S,
+// 	) -> Result<S::Ok, S::Error> {
+// 		serializer.serialize_str(&t.to_string())
+// 	}
+
+// 	pub fn deserialize<'de, D: Deserializer<'de>, T: std::str::FromStr>(
+// 		deserializer: D,
+// 	) -> Result<T, D::Error> {
+// 		let s = String::deserialize(deserializer)?;
+// 		s.parse::<T>().map_err(|_| serde::de::Error::custom("Parse from string failed"))
+// 	}
+// }
+
+// #[cfg(feature = "std")]
+// impl serde::Serialize for AccountId32 {
+//     fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
+//     where
+//         S: serde::Serializer,
+//     {
+//         serializer.serialize_str(&self.to_ss58check())
+//     }
+// }
+
+// #[cfg(feature = "std")]
+// impl<'de> serde::Deserialize<'de> for AccountId32 {
+//     fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
+//     where
+//         D: serde::Deserializer<'de>,
+//     {
+//         Ss58Codec::from_ss58check(&String::deserialize(deserializer)?)
+//             .map_err(|e| serde::de::Error::custom(format!("{:?}", e)))
+//     }
+// }
+
+// #[derive(Clone, Encode, Decode, PartialEq, TypeInfo)]
+// #[cfg_attr(feature = "std", derive(serde::Serialize, serde::Deserialize))]
+// #[cfg_attr(feature = "std", serde(bound(serialize = "Balance: std::fmt::Display")))]
+// #[cfg_attr(feature = "std", serde(bound(deserialize = "Balance: std::str::FromStr")))]
+// #[cfg_attr(feature = "std", derive(serde::Serialize, serde::Deserialize))]
+// #[cfg_attr(
+//     feature = "std",
+//     serde(
+//         rename_all = "camelCase",
+//         bound(serialize = "Account: Serialize"),
+//         bound(deserialize = "Account: Deserialize<'de>")
+//     )
+// )]
+// pub struct Kitty<Account, Balance> {
+// 	pub dna: [u8; 16],
+// 	#[cfg_attr(feature = "std", serde(with = "serde_fields"))]
+// 	pub price: Balance,
+// 	pub gender: Gender,
+// 	#[cfg_attr(feature = "std", serde(with = "serde_fields"))]
+// 	pub owner: Account,
+// }
 
 #[frame_support::pallet]
 pub mod pallet {
 	use super::*;
-	use frame_support::pallet_prelude::*;
-	use frame_support::{
-		log,
-		sp_runtime::traits::Hash,
-		traits::{tokens::ExistenceRequirement, Currency, Randomness},
-		transactional,
-	};
-	use frame_system::pallet_prelude::*;
-	use scale_info::TypeInfo;
-	use sp_io::hashing::blake2_128;
-
-	#[cfg(feature = "std")]
-	use frame_support::serde::{Deserialize, Serialize};
 
 	type AccountOf<T> = <T as frame_system::Config>::AccountId;
 	type BalanceOf<T> =
@@ -39,6 +105,7 @@ pub mod pallet {
 	#[derive(Clone, Encode, Decode, PartialEq, RuntimeDebug, TypeInfo, MaxEncodedLen)]
 	#[scale_info(skip_type_params(T))]
 	#[codec(mel_bound())]
+	#[cfg_attr(feature = "std", derive(serde::Serialize, serde::Deserialize))]
 	pub struct Kitty<T: Config> {
 		pub dna: [u8; 16], // Using 16 bytes to represent a kitty DNA
 		pub price: Option<BalanceOf<T>>,
@@ -328,6 +395,16 @@ pub mod pallet {
 			T::MaxKittyOwned::get()
 		}
 
+		// pub fn get_kitties(kitties_str: &str) -> String {
+		// 	// let mut all_kitties = String::new();
+		// 	// for kitties in Self::kitties {
+
+		// 	// }
+		// 	// all_kitties
+		// 	let kitties_hash = H256::from_str(kitties_str).unwrap();
+		// 	let query_kitties = Self::kitties(kitties_hash);
+		// }
+
 		// Helper to mint a Kitty.
 		pub fn mint(
 			owner: &T::AccountId,
@@ -360,6 +437,14 @@ pub mod pallet {
 				Some(kitty) => Ok(kitty.owner == *acct),
 				None => Err(<Error<T>>::KittyNotExist),
 			}
+		}
+
+		pub fn get_kitty_info(kitty_hash: T::Hash) -> Option<Kitty<T>> {
+			Self::kitties(kitty_hash)
+		}
+
+		pub fn get_current_total_kitties() -> u64 {
+			Self::kitty_cnt()
 		}
 
 		#[transactional]
